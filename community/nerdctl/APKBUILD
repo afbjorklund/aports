@@ -1,0 +1,38 @@
+# Contributor: Anders F Björklund <anders.f.bjorklund@gmail.com>
+# Maintainer: Anders F Björklund <anders.f.bjorklund@gmail.com>
+
+pkgname=nerdctl
+pkgdesc="Docker-compatible CLI for containerd"
+url="https://github.com/containerd/nerdctl"
+
+_commit=0ddaffd2ce304dd917267470883898feff9463dc
+pkgver=0.16.0
+pkgrel=0
+
+_ver=v${pkgver}
+# if we're building against an explicit commit beyond pkgver, use this instead:
+#_ver=$_commit
+
+arch="all"
+license="Apache-2.0"
+makedepends="go"
+source="nerdctl-$pkgver.tar.gz::https://github.com/containerd/nerdctl/archive/$_ver.tar.gz"
+builddir="$srcdir/src/github.com/containerd/nerdctl"
+options="!check"
+
+build() {
+	cd "$srcdir"
+	export GOPATH="$PWD"
+	mkdir -p "$(dirname "$builddir")"
+	ln -s "$PWD/$pkgname-${_ver#v}" "$builddir"
+	cd "$builddir"
+	make VERSION="v$pkgver" REVISION="$_commit"
+}
+
+package() {
+	install -Dsm755 "$builddir"/_output/nerdctl "$pkgdir"/usr/bin/nerdctl
+}
+
+sha512sums="
+4c2ecc42039977aa041b0dda49cfe031a5a21a4c7b7f6f9508d4abcc8af5d076873df77336d46f3e3b71a19222ce4d29011532cb0c36c8146a741f2c4cc2f474  nerdctl-0.16.0.tar.gz
+"
