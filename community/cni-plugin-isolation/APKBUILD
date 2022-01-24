@@ -1,0 +1,26 @@
+# Contributor: Anders F Björklund <anders.f.bjorklund@gmail.com>
+# Maintainer: Anders F Björklund <anders.f.bjorklund@gmail.com>
+pkgname=cni-plugin-isolation
+pkgver=0.0.4
+pkgrel=0
+pkgdesc="CNI bridge isolation plugin"
+url="https://github.com/AkihiroSuda/cni-isolation"
+license="Apache-2.0"
+arch="all"
+depends=""
+makedepends="go"
+options="!check" # Requires root but 'checkroot' doesn't work with go programs
+source="$pkgname-$pkgver.tar.gz::https://github.com/AkihiroSuda/cni-isolation/archive/v$pkgver.tar.gz"
+builddir="$srcdir/cni-isolation-$pkgver"
+
+build() {
+	make
+}
+
+package() {
+	install -Dm755 -t "$pkgdir"/usr/libexec/cni bin/*
+}
+
+sha512sums="
+36e256bcdab43abcec95309950fd8876e93d139b759078fc62119f1d628fc7d617f58210bba407f44f3eef38f6d301a9da37525ce3bf171a78cc8b270a5f136b  cni-plugin-isolation-0.0.4.tar.gz
+"
