@@ -1,0 +1,50 @@
+# Contributor: Oleg Titov <oleg.titov@gmail.com>
+# Maintainer: Oleg Titov <oleg.titov@gmail.com>
+pkgname=squashfuse_ll
+pkgver=0.1.105
+pkgrel=0
+pkgdesc="Squashfuse low-level - Mount SquashFS archives using FUSE"
+url="https://github.com/vasi/squashfuse"
+license="BSD-2-Clause"
+arch="all"
+depends="fuse3 zlib"
+makedepends="
+	autoconf
+	automake
+	libtool
+	pkgconfig
+	fuse3-dev
+	zlib-dev
+	squashfs-tools
+	fio
+	"
+source="https://github.com/vasi/squashfuse/archive/$pkgver/squashfuse-$pkgver.tar.gz
+        https://github.com/vasi/squashfuse/pull/70.patch
+        https://github.com/vasi/squashfuse/pull/77.patch"
+
+builddir="$srcdir/${pkgname/_ll/}-$pkgver"
+
+prepare() {
+	default_prepare
+	./autogen.sh
+}
+
+build() {
+	FLAGS=-std=c99 ./configure --prefix=/usr --enable-multithreading
+	make squashfuse_ll tests/ll-smoke.sh
+}
+
+check() {
+	tests/ll-smoke.sh
+}
+
+package() {
+	install -d "$pkgdir"/usr/libexec/apptainer/bin
+	install squashfuse_ll "$pkgdir"/usr/libexec/apptainer/bin/$pkgname
+}
+
+sha512sums="
+6bf18575fd4732f3b0e4530902f2556859c2efbbd781a31bdbf97fe6601412dc750a80354a8ab08a3132d4f8680ea5ff0dd04440f29243906f1017aa6c70bede  squashfuse-0.1.105.tar.gz
+d89aadd32c76552c738eb10844a19fa4c1e865554d4a9ec90dfec818a43cafc12459a317c95a41077dffea9304a89e2d2f8a0bd4aac6c7b37a796efae52567aa  70.patch
+46f6fe0c4e821f00f6ed4617986d65e7bbd56f5762187e969c12c1d04a772c6a831be694403267aa561ff24382c94e9a0b488768fdd2b260829f915b0882768e  77.patch
+"
